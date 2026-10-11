@@ -26,7 +26,12 @@ set -a; . ./.env; set +a
 set_env() { # key value
   if grep -q "^$1=" .env; then sed -i "s|^$1=.*|$1=$2|" .env; else echo "$1=$2" >> .env; fi
 }
-genpw() { tr -dc 'A-Za-z0-9' </dev/urandom | head -c 24; }
+
+genpw() {
+  local password
+  password="$(od -An -N32 -tx1 /dev/urandom | tr -d ' \n' | cut -c1-24)"
+  printf '%s' "$password"
+}
 
 # ---- passwords ----------------------------------------------------------
 if [[ "$IPA_ADMIN_PASSWORD" == "CHANGE_ME" ]]; then
