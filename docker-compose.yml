@@ -4,6 +4,7 @@ services:
     container_name: freeipa
     hostname: ${IPA_HOSTNAME}
     restart: unless-stopped
+    cgroup: host
     userns_mode: "host"
     stdin_open: true
     tty: true
@@ -20,10 +21,12 @@ services:
       --forwarder=${IPA_FORWARDER}
       --no-reverse
       --no-ntp
+      --skip-mem-check
     sysctls:
       net.ipv6.conf.all.disable_ipv6: 0
     volumes:
       - ./data:/data
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
     # Bound to the private IP so port 53 doesn't clash with systemd-resolved
     # (which listens on 127.0.0.53 on Ubuntu).
     ports:
